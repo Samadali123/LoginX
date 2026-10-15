@@ -1,6 +1,10 @@
 import { encryptPassword, clearCachedPublicKey } from './crypto';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const envUrl = (import.meta.env.VITE_API_URL || '').trim();
+const API_BASE_URL =
+  envUrl && (!import.meta.env.PROD || !envUrl.includes('localhost'))
+    ? envUrl
+    : (import.meta.env.DEV ? 'http://localhost:5000' : '');
 
 export interface User {
   id: string;
