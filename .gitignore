@@ -8,6 +8,8 @@ dist/
 dist-ssr/
 build/
 *.local
+!backend/dist/
+!backend/dist/**
 
 # Environment variables & secrets (CRITICAL: Never push to GitHub)
 .env

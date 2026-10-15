@@ -18,6 +18,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
   'http://localhost:3000',
+  'http://localhost:5000',
+  'http://127.0.0.1:5000',
 ];
 
 app.use(
@@ -48,9 +50,19 @@ app.get('/health', (req, res) => {
 // Authentication API
 app.use('/api/auth', authRouter);
 
-// Serve static frontend in production if built
-const frontendDist = path.join(__dirname, '../../frontend/dist');
-if (fs.existsSync(frontendDist)) {
+// Locate the frontend static build folder (backend/dist or frontend/dist)
+const candidateDistPaths = [
+  path.join(__dirname, '../dist'),
+  path.join(process.cwd(), 'dist'),
+  path.join(__dirname, '../../frontend/dist'),
+  path.join(process.cwd(), '../frontend/dist'),
+];
+
+const frontendDist = candidateDistPaths.find(
+  (dir) => fs.existsSync(dir) && fs.existsSync(path.join(dir, 'index.html'))
+);
+
+if (frontendDist) {
   app.use(express.static(frontendDist));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path === '/health') return next();
