@@ -104,9 +104,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       await login(loginEmail.trim().toLowerCase(), loginPassword);
       onClose();
       navigate('/portal', { replace: true });
-    } catch {
-      // User specification: show exact message "Email or Password is incorrect"
-      setLoginError('Email or Password is incorrect');
+    } catch (err: any) {
+      const msg = err?.message || err?.data?.message;
+      setLoginError(msg || 'Email or Password is incorrect');
     } finally {
       setLoginLoading(false);
     }
@@ -311,6 +311,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     setMode('signup');
                     setLoginError(null);
                     setIsDuplicateUser(false);
+                    if (loginEmail.trim()) {
+                      setRegEmail(loginEmail.trim());
+                    }
                   }}
                 >
                   Sign Up

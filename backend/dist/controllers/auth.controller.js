@@ -189,16 +189,19 @@ async function login(req, res) {
             return;
         }
         try {
-            // Find user strictly by email
+            // Find user by email or username
             const user = await prisma_1.prisma.user.findFirst({
                 where: {
-                    email: { equals: emailInput, mode: 'insensitive' },
+                    OR: [
+                        { email: { equals: emailInput, mode: 'insensitive' } },
+                        { username: { equals: emailInput, mode: 'insensitive' } },
+                    ],
                 },
             });
             if (!user) {
-                res.status(401).json({
+                res.status(404).json({
                     success: false,
-                    message: 'Email or Password is incorrect',
+                    message: 'you dont have an Account ,  Please Sign up first',
                 });
                 return;
             }
